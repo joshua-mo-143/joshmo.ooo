@@ -1,0 +1,39 @@
+<!-- HTML -->
+<head>
+  <title> Joshua Mo | {{config.title}} </title>
+  <link rel="stylesheet" href="{{ get_url(path="styles.css", cachebust=true) }}"/>
+</head>
+<body>
+    <div class="header">
+      <h1>Joshua Mo.</h1>
+      <h2>DevRel. Engineer. Writer.</h2>
+      <div class="links-bar">
+		<a href="/blog">Blog</a>
+        <a href="https://twitter.com/joshmo_dev" target="_blank">Twitter</a>
+        <a
+          href="https://www.linkedin.com/in/joshua-mo-4146aa220/"
+          target="_blank"
+          >LinkedIn</a
+        >
+	  {% if current_path != "/" %}
+	  <a href="/">Home</a>
+	  {% endif %}
+      </div>
+    </div>
+
+	<div id="content">
+	  <div id="content-container">
+	{% block content %}
+  <h1>Home</h1>
+    <p>This is my personal homepage. You can find all my musings here.</p>
+    <p>Table of Contents:</p>
+    <ul>
+      <li><a href="/about">Who is Joshua Mo?</a></li>
+      <li><a href="/words">My articles</a></li>
+      <li><a href="/contact">Hire/Contact me</a></li>
+    </ul>
+
+	{% endblock content %}
+	  </div>
+	  </div>
+</body>
