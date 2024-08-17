@@ -1,0 +1,29 @@
++++
+title = "Good tooling matters."
+description = "My thoughts on good tooling and how it benefits your productivity"
+template = "blog-page.html"
+tags = ["rust"]
+
+[extra]
+repository = "joshua-mo-143/www"
++++
+
+## Introduction
+Like every tradesman's toolbox, software engineers also have a toolbox that must be fit for purpose. If you don't have good tools, you can definitely get the job done - but it will be much more difficult to replace. If you have low-quality tools, you'll probably need to replace any breakages much more often.
+
+In my opinion, good tooling should do a few things:
+- It should feel natural to use
+- It should be comfortable to use
+- It shouldn't get in the way of your other tools
+
+The obvious parallel to this is the code editor. A good code editor, at minimum, should provide an interface that's intuiitive to use and gets out of the way where required. But an excellent text editor should have extra value-adds to help you become (even) more productive as you learn a given IDE and get used to the workflow. For example, Vim (and any other IDE that uses Vim motions) has Vim motions which let you type much quicker by using shortcuts to be able to get the non-thinking part of software engineering over and done with. How much this benefits you depends primarily on your typing speed and willingness to learn it, of course, but it's there. It also helps if you've already thought of the whole design for a project so you can write it all up quickly (or "blazingly fast").
+
+Of course, the best tooling is generally hotly contested. However, this doesn't mean the best tooling is automatically what makes you the most productive. And that's okay! If you need to ship something and get it done fast, at the end of the day you're always going to use your most productive tech stack. However, learning new tools in the hope that they can make you more productive is never a bad thing.
+
+This is doubly true in programming language tooling. Some of the ways that languages are designed can influence tooling heavily: for example, is the language built for modularity with consideration for package management baked in? Does the language philosophy encourage downloading packages to supplement your application? Or does it instead encourage you to roll your own stuff unless you really need to? 
+
+Of course, all of these questions have trade-offs and are should not be treated as absolutes. Nevertheless, the design choices in the tooling should reflect the language choices. For example, Rust has a small standard library - this means that if you can implement something better than the standard library does, you can do so and publish it without bureaucracy getting in the way. This has also lead to library sharing being relatively important - which is where package registries come in.
+
+After having used Python for almost 2 months professionally now, I can comfortably say that I don't feel like the tooling in Python is that great. This was mostly informed by me getting back into Python and re-learning the ecosystem: having to manage different Python versions and pick a package manager, then dealing with issues regarding the various linters (mypy/basedpyright to be specific) and untyped libraries, and so on and so forth. 
+
+While Rust is a hard language, you can absolutely garuantee that the core tooling for the language will be easy to use and high quality. Of course, there is the odd video of someone attempting to use `rustc` instead of cargo. However, once you understand that `cargo` is used for everything, it gets much easier.
