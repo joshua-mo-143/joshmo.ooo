@@ -21,7 +21,7 @@ I realise that playing the Rust card here, as someone who is already heavily inv
 
 ## What's so good about Qdrant?
 
-In my opinion, Qdrant makes vector search extremely easy (and is really good at it!). All you need to do is configure and create a collection (selecting things like the embedding dimension size and search method, as well as whether to store embeddings on disk or in memory). Then you insert embeddings alongside relevant JSON payloads and you're basically ready to go! If you have used Weaviate or Pinecone, it is mostly the same process.
+In my opinion, Qdrant makes vector search extremely easy (and is really good at it!). All you need to do is configure and create a collection (selecting things like the embedding dimension size and search method, as well as whether to store embeddings on disk or in memory). Then you insert embeddings alongside relevant JSON payloads and you're basically ready to go! If you have used Weaviate or Pinecone, it is mostly the same process. They also have [a number of useful examples to help you get started,](https://qdrant.tech/documentation/examples/) utilising a range of other AI/ML services and libraries respectively.
 
 You can also store multiple embeddings under a single embedding record so that you can search for all of them at the same time. For example, if you have two relevant snippets (like a code snippet and a JSON payload snippet that contains metadata about the code snippet) that go together and you want your application to search for cosine similarity for both of them, it is quite simple to just put them together in an array and then upsert the relevant embeddings.
 
