@@ -1,6 +1,11 @@
 <!-- HTML -->
 <head>
   <title> Joshua Mo | {{ section.title }} </title>
+  <meta property="og:title" content="Joshua Mo | Blog"/>
+  <meta property="og:url" content="{{ current_path }}"/>
+  <meta property="og:description" content="Joshua Mo's blog."/>
+  <meta property="og:image" content="/main_header.png"/>
+
   <link rel="stylesheet" href="{{ get_url(path="styles.css", cachebust=true) }}"/>
   <script data-goatcounter="https://stmblst.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
