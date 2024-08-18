@@ -46,5 +46,3 @@ You can also, of course, check out the Shuttle articles I've written on Qdrant i
 - [Build an agentic RAG workflow with Qdrant and Rust](https://www.shuttle.rs/blog/2024/05/23/building-agentic-rag-rust-qdrant)
 - [Implement semantic caching with Qdrant and Rust](https://www.shuttle.rs/blog/2024/05/30/semantic-caching-qdrant-rust)
 - [Building a RAG web service with Qdrant and Rust](https://www.shuttle.rs/blog/2024/02/28/rag-llm-rust)
-
-e
