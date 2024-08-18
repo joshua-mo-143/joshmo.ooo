@@ -2,6 +2,12 @@
 <head>
   <title> Joshua Mo | {{ page.title }} </title>
   <link rel="stylesheet" href="{{ get_url(path="styles.css", cachebust=true) }}"/>
+  <meta property="og:title" content="{{ page.title }}"/>
+  <meta property="og:url" content="{{ current_path }}"/>
+  <meta property="og:description" content="{{ page.description }}"/>
+  {% if page.extra.thumb %}
+  <meta property="og:image" content="/blog/{{ page.extra.thumb }}"/>
+  {% endif %}
   <script data-goatcounter="https://stmblst.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -12,6 +18,9 @@
   {% if page.extra.repository %}
   <p>Related GitHub repo: <a href="https://www.github.com/{{ page.extra.repository }}">{{ page.extra.repository }}</a></p>
   {% endif %}
+  {% if page.extra.thumb %}
+    <img src="/blog/{{ page.extra.thumb }}"/>
+	{% endif %}
 {% if page.toc %}
     <ul>
     {% for h1 in page.toc %}

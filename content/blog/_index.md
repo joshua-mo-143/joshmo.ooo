@@ -1,6 +1,6 @@
 +++
 title = "Blog"
 template = "blog.html"
-description = "Meme."
+description = "The joshmo.ooo blog index."
 sort_by = "date"
 +++

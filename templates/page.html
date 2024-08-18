@@ -1,4 +1,15 @@
 {% extends "index.html" %}
+{% block header %} 
+  <title> Joshua Mo | {{page.title}} </title>
+  <meta property="og:title" content="Joshua Mo | {{ page.title }}"/>
+  <meta property="og:url" content="{{ current_url }}"/>
+  <meta property="og:description" content="Joshua Mo's website."/>
+  <meta property="og:image" content="/main_header.png" />
+  <meta name="twitter:card" content="Joshua Mo's website." />
+  <meta name="twitter:site" content="@joshmo_dev" />
+  <meta name="twitter:creator" content="@joshmo_dev" />
+{% endblock header %} 
 {% block content %}
+    <img src="/main_header.png"/>
 	{{ page.content | safe }}
 {% endblock content %}

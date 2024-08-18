@@ -3,6 +3,9 @@ title = "Good tooling matters."
 description = "My thoughts on good tooling and how tooling affects productivity"
 template = "blog-page.html"
 tags = ["miscellaneous"]
+
+[extra]
+thumb = "good-tooling-matters-thumb.png"
 +++
 
 Like every tradesman's toolbox, software engineers also have a toolbox that must be fit for purpose. If you don't have good tools, you can definitely get the job done - but it will be much more difficult to replace. If you have low-quality tools, you'll probably need to replace any breakages much more often. And of course, nobody's trying to hammer a nail with a pair of pliers unless you have a point to prove.

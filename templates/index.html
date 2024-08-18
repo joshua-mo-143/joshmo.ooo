@@ -1,8 +1,17 @@
 <!-- HTML -->
 <head>
-  <title> Joshua Mo | {{config.title}} </title>
   <link rel="stylesheet" href="{{ get_url(path="styles.css", cachebust=true) }}"/>
   <script data-goatcounter="https://stmblst.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  {% block header %}
+  <title> Joshua Mo | Home </title>
+  <meta property="og:title" content="Joshua Mo"/>
+  <meta property="og:url" content="https://joshmo.ooo"/>
+  <meta property="og:description" content="Joshua Mo's website."/>
+  <meta property="og:image" content="/main_header.png" />
+  <meta name="twitter:card" content="Joshua Mo's website." />
+  <meta name="twitter:site" content="@joshmo_dev" />
+  <meta name="twitter:creator" content="@joshmo_dev" />
+  {% endblock header %}
 </head>
 <body>
     <div class="header">

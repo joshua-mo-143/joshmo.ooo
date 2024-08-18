@@ -3,6 +3,9 @@ title = "Hello world!"
 description = "An introduction to my blog."
 template = "blog-page.html"
 tags = ["miscellaneous"]
+
+[extra]
+thumb = "hello-world-thumb.png"
 +++
 
 ## Introduction
