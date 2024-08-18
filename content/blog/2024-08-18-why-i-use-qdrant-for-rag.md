@@ -10,7 +10,7 @@ thumb = "why-i-use-qdrant-for-rag-thumb.png"
 
 ## Introduction
 
-In the short amount of time that I've used AWS Bedrock and other related AWS AI/ML tools for professional work, I've learned that AWS does not particularly excel in the vector search field. There's a few things that I have used with AWS for AI/ML purposes, with varying degrees of results. The common thread between all of the options is that while they're *good*, they're not great. For example: it's not obvious that a lot of the Bedrock models (outside of Claude) are pretty mediocre. OpenSearch, while technically being usable for RAG, is more of a general search engine and can fit other purposes like log analytics and full-text search (and therefore does not cater to the particularities of RAG systems).
+In the short amount of time that I've used AWS Bedrock and other related AWS AI/ML tools for professional work, I've learned that AWS does not particularly excel in the vector search field. There's a few things that I have used with AWS for AI/ML purposes, with varying degrees of results. The common thread between all of the options is that while they're *good*, they're not great. For example: it's not obvious that a lot of the Bedrock models (outside of Claude) are pretty mediocre. OpenSearch, while technically being usable for RAG, is more of a general search engine and can fit other purposes like log analytics and full-text search (and therefore does not cater to the particularities of RAG systems). Although I can tolerate Amazon for work, I would much prefer a simpler solution that lets you keep working instead of having to constantly fiddle with knobs.
 
 Enter Qdrant, a [vector storage database that aims to excel at high-performance vector search at scale.](https://qdrant.tech/) Compared to other solutions (and of course the previously mentioned AWS offering), I found their offering to be pretty compelling:
 - They [use Rust under the hood](https://github.com/qdrant/qdrant)
@@ -30,6 +30,7 @@ You can also store multiple embeddings under a single embedding record so that y
 Their free tier is also pretty generous and I have found that even after inserting quite a few embeddings, I'm still within the free tier bounds. As previously mentioned of course, you can also run Qdrant's Docker image should you want to try things locally. However, for web applications that I've created in the past, it works pretty well for the use cases I have. If I *were* to use Qdrant for a business use case though, I'd be happy to do so. Judging by [this Reddit thread](https://www.reddit.com/r/vectordatabase/comments/170j6zd/my_strategy_for_picking_a_vector_database_a/), Qdrant is the cheapest in terms of pricing and it's not close, except for the pricing at 20M vectors where it comes out a bit more expensive than Pinecone normally, but is much cheaper for high perf).
 
 The Qdrant team are also quite active on their Discord server. Whether this is a benefit or not mostly depends on whether or not you use Discord, but if you have any questions you can always drop a mention and they tend to respond pretty quickly. They also hold some of their events there so if you want insider insight, that's the place to be.
+
 
 ## Why not Pinecone?
 
