@@ -5,9 +5,17 @@
   <meta property="og:title" content="{{ page.title }}"/>
   <meta property="og:url" content="{{ current_path }}"/>
   <meta property="og:description" content="{{ page.description }}"/>
-  {% if page.extra.thumb %}
   <meta property="og:image" content="/blog/{{ page.extra.thumb }}"/>
-  {% endif %}
+
+  <meta name="twitter:site" content="@joshmo_dev" />
+  <meta name="twitter:creator" content="@joshmo_dev" />
+  <meta name="twitter:card" content="{{ page.description }}">
+  <meta property="twitter:domain" content="joshmo.ooo">
+  <meta property="twitter:url" content="https://joshmo.ooo">
+  <meta name="twitter:title" content="{{ page.title }}">
+  <meta name="twitter:description" content="{{ page.description }}">
+  <meta name="twitter:image" content="/blog/{{ page.extra.thumb }}">
+
   <script data-goatcounter="https://stmblst.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
