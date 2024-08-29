@@ -39,7 +39,7 @@ This answer boils down to a few things, currently:
 - Pinecone's Rust SDK is currently in alpha at the moment, and doesn't have full functionality. This is somewhat painful as it means I have to switch to Python or another language just to use Pinecone... not ideal.
 - How am I supposed to do local dev testing if there is no Docker image for me to pull?
 
-Pinecone being closed-source is neither here nor there, but having to register just to do anything is already a non-starter for me personally. However, the RBAC feature of Pinecone is something that Qdrant lacks and could maybe benefit from. Though if you're using Qdrant from AWS Marketplace, you probably don't need to worry about this.
+Pinecone being closed-source is neither here nor there, but having to register just to do anything is already a non-starter for me personally. 
 
 ## Final thoughts
 
