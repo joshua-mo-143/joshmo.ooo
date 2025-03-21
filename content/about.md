@@ -3,7 +3,7 @@ title = "About"
 +++
 
 ## About Me
-Professionally, I'm a Junior DevRel Engineer at [Shuttle.rs](https://shuttle.rs), a Rust-native cloud platform.
+Professionally, I'm a DevRel Engineer at [Playgrounds Analytics](https://playgrounds.network), a company that aims to empower AI developers through free open source tooling.
 
 My main programming language of choice is Rust.
 
@@ -14,10 +14,6 @@ Some other languages I like using:
 - OCaml
 
 Some random facts about my setup:
-- Editor: Emacs
+- Editor: Zed
 - Terminal: Alacritty
 - OS: Ubuntu
-
-Before I joined Shuttle, I worked in the Chinese wholesale food industry doing sales order entry. I learned Chinese to take sales orders, rudimentary Python and technical writing.
-
-In my spare time, I like hacking and experimenting on new projects. You can check my currently maintained projects [here](/projects).
