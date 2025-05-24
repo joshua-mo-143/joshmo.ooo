@@ -1109,6 +1109,7 @@ Of course, as you've probably noticed we have already implemented the first type
 - Create an extension layer of type `T: Clone`. Implement `FromRequest<S>` and `FromRequestParts<S>` for it.
 - Call `request.extensions_mut()` and insert the type in, then call the service as usual with the request that has had the extension data added.
 
+Firstly, we'll create the layer type (so we can add it into our router):
 ```rust
 
 struct Extension<T>(pub T);
@@ -1144,6 +1145,7 @@ impl<T, S> tower::Service<Request<Incoming>> for ExtensionService<T, S> where T:
 }
 ```
 
+The second half of this is the `FromRequest` implementation. Pretty easy.
 ```rust
 
 impl<T, S> FromRequest<S> for Extension<T> {
