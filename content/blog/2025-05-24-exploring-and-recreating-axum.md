@@ -1143,6 +1143,7 @@ impl<T, S> tower::Service<Request<Incoming>> for ExtensionService<T, S> where T:
         std::task::Poll::Ready(Ok(()))
     }
 }
+
 ```
 
 The second half of this is the `FromRequest` implementation. Pretty easy.
@@ -1157,6 +1158,7 @@ impl<T, S> FromRequest<S> for Extension<T> {
         Self(val)
     }
 }
+
 ```
 
 This will allow you to add extensions into your route handlers like so:
