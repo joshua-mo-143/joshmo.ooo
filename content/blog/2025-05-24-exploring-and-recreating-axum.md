@@ -60,6 +60,7 @@ Essentially, how this works is that using type wizardry and function pointers yo
 
 From the internal codebase, this is what it roughly looks like:
 ```rust
+
 // https://github.com/tokio-rs/axum/blob/main/axum/src/routing/mod.rs#L71
 impl<S> Router<S> {
 	// .. other methods
@@ -88,6 +89,7 @@ pub struct MethodRouter<S = (), E = Infallible> {
 
 On top of this, some methods are also provided to allow `tower` services to be created from this router type. Conveniently, there is also a method that allows for calling with state (depending on what the state is, basically):
 ```rust
+
 // https://github.com/tokio-rs/axum/blob/main/axum/src/routing/method_routing.rs#L1286
 impl<B, E> Service<Request<B>> for MethodRouter<(), E>
 where
@@ -116,6 +118,7 @@ where
 
 Essentially, the method router will chain the routes together and try to find which one matches the request and invoke the relevant service. You can see below that a declarative macro has been set up to do exactly this:
 ```rust
+
 // https://github.com/tokio-rs/axum/blob/main/axum/src/routing/method_routing.rs#L1118
 impl<S, E> MethodRouter<S, E> {
 	// .. other methods
@@ -184,6 +187,7 @@ impl<S, E> MethodRouter<S, E> {
 From the above, you can see that essentially it just makes a method router that allows for several methods. On receiving a request, it will then try to go through each HTTP request method and check for a match (and call the function pointer if it does match). See the below for an example of how this looks like on the user end:
 
 ```rust
+
 use axum::{Router, routing::{get, post}};
 
 Router::new().route("/",
@@ -200,6 +204,7 @@ One of the core principles of Axum (and in fact a lot of other web frameworks) i
 
 In practice, extractors in Axum look like this:
 ```rust
+
 use axum::Json;
 
 async fn do_something(Json(json): Json<serde_json::Value>) -> &'static str {
@@ -230,7 +235,8 @@ impl<T, F, R> Handler for Fn(T) -> F where
 This is of course pseudo-code, but you get the idea. You write a function pointer that takes one or more types that implements `FromRequest` (ie it can be derived from a request), processes it and returns a type that implements `Response`. Nothing too crazy. Of course, this *does* lead to a lot of boilerplate, which has evidently led to the use of another declarative macro, named simply (or perhaps amusingly) `all_the_tuples`:
 
 ```rust
-// https://github.com/tokio-rs/axum/blob/dd8d4a47cb674f71d2163518a69568898f5e9077/axum-core/src/extract/tuple.rs#L74
+
+// https://github.com/tokio-rs/axum/blob/main/axum-core/src/extract/tuple.rs#L74
 all_the_tuples!(impl_from_request);
 ```
 
@@ -240,6 +246,7 @@ Alright, so onto the fun part: recreating Axum. Get ready, because there's going
 To start, we're going to create our new project:
 
 ```bash
+
 cargo init mini-axum
 cd mini-axum
 ```
@@ -247,6 +254,7 @@ cd mini-axum
 Next, we'll add our dependencies. Cue the long list of dependencies!
 
 ```bash
+
 cargo add bytes futures http http-body-util hyper hyper-util \
 serde serde-json tokio tower -F hyper/server,hyper-util/full,serde/derive,\
 tokio/net,tower/util
@@ -273,6 +281,7 @@ The first step on our journey will be creating the router/service itself. While 
 To be able to use `hyper` as a web server, we need to write a type that implements the `hyper::service::Service` trait - so we'll do exactly that. For now, our `Router` type is going to be a unit struct - we'll fill it out later.
 
 ```rust
+
 use hyper::{body::Incoming, service::Service as HyperService};
 use http::{Response, Request};
 use http_body_util::Full;
@@ -299,6 +308,7 @@ As you can see, nothing too crazy. We return a box-pinned future (or a `BoxFutur
 The next thing to do is to create the `Service` struct by attaching together a `TcpListener` and our router (we'll assume that the user instantiates their own `TcpListener`).
 
 ```rust
+
 pub struct Service {
     tcp: TcpListener,
     router: Router,
@@ -328,6 +338,7 @@ impl Service {
 Additionally, the Axum implementation of this actually also implements `IntoFuture`, allowing it to simply be awaited rather than needing to do anything else as this trait allows it to be turned into a future.
 
 ```rust
+
 impl<S> IntoFuture for Service<S>
 where
     S: Clone + Send + Sync + 'static,
@@ -343,6 +354,7 @@ where
 Now to actually try out our thing we just made. Create a new `examples` folder in your project root, then create a file called `basic.rs` - and put this code in:
 
 ```rust
+
 use mini_axum::{Router, Service};
 use serde_json::{Value, json};
 use tokio::net::TcpListener;
@@ -368,6 +380,7 @@ Before we can create any endpoints, we should probably define a response type. W
 Below is a short and simple example of this: we write a trait that allows types to be turned into our `MiniResponse` type, which then implements a method to turn it into a Hyper response.
 
 ```rust
+
 use bytes::Bytes;
 use http::{StatusCode, Response};
 use http_body_util::Full;
@@ -405,6 +418,7 @@ impl MiniResponse {
 The rest of the work on this is primarily just writing `IntoMiniResponse` implementations for however many types you want to do it for. Here is one I wrote for returning JSON:
 
 ```rust
+
 use serde::{Deserialize, Serialize};
 use http::StatusCode;
 
@@ -444,6 +458,7 @@ As you probably already know, Axum takes function pointers as inputs for route h
 The below struct essentially represents a handler, with the input and state types converted to `PhantomData`, a zero-size value that can be used to essentially pretend that we have ownership of a type when nothing exists there.
 
 ```rust
+
 pub struct IntoHandlerStruct<H, T, S> {
     inner: H,
 	  state: S,
@@ -458,6 +473,7 @@ pub trait IntoHandler<T, S>: Sized {
 The next thing to do is to implement our new trait for `F` - that is to say, a function pointer that returns a future wrapping our response type:
 
 ```rust
+
 impl<F, Fut, I, S> IntoHandler<(), S> for F
 where
     F: Fn() -> Fut + Clone + Send + Sync + 'static,
@@ -486,6 +502,7 @@ Once done, we then need to implement the `tower::Service` trait for `IntoHandler
 - `S` is the state type. We're cloning state into handlers when they get called (and potentially sharing/sending state across threads), hence the trait bounds here.
 
 ```rust
+
 impl<F, Fut, S, I> tower::Service<Request<Incoming>> for IntoHandlerStruct<F, (), S>
 where
     F: Fn() -> Fut + Clone + Send + Sync + 'static,
@@ -519,6 +536,7 @@ type DynService = BoxCloneSyncService<Request<Incoming>, Response<Full<Bytes>>, 
 Now that we've defined our dynamic service type, we're going to use it in our router. We will also additionally define the `S` generic which will be our shared state. For now though, we will leave our router stateless and come back to it as we'll be covering it in another section later.
 
 ```rust
+
 use std::sync::Arc;
 
 // Note: Technically, if your RwLock ever needs to cross an await point, you should use tokio's RwLock.
@@ -545,6 +563,7 @@ impl Router<()> {
 In terms of adding a function to add a route, we need to set a pretty heavy amount of trait bounds. You can see the length of the type signature below is not particularly easy on the eyes:
 
 ```rust
+
 impl<S> Router<S>
 where
     S: Clone + Send + Sync + 'static,
@@ -584,6 +603,7 @@ You may have noticed that while we're taking `IntoHandler<T, S>` for our route f
 We will also additionally need to go back to our  `impl<S> Service<Request<Incoming>> for Router<S>` block and make some changes.
 
 ```rust
+
 impl<S> Service<Request<Incoming>> for Router<S>
 where
     S: Clone + Send + Sync + 'static,
@@ -620,6 +640,7 @@ where
 Finally, let's go back to our `basic.rs` example we wrote earlier, and change it a bit. We will add a handler function that returns a JSON message and add it as a route in our router.
 
 ```rust
+
 use hyper::StatusCode;
 use mini_axum::{
     Router, Service,
@@ -657,6 +678,7 @@ If you run `cargo run --example basic` again and try visiting `localhost:9999` i
 The process of using extractors is (in theory) relatively simple: you just add them as arguments to your handler, and it *just works*. For example (using the official Axum library):
 
 ```rust
+
 use axum::Json;
 
 async fn echo_message(Json(json): Json<serde_json::Value>) -> Json<serde_json::Value> {
@@ -670,6 +692,7 @@ On the other hand, *implementing* extractors can be significantly more painful a
 
 The code for this part essentially relies upon two traits - `FromRequest` and `FromRequestParts` (we'll use the same naming here as there's no reason to deviate):
 ```rust
+
 use http::Request;
 use hyper::body::Incoming;
 
@@ -688,6 +711,7 @@ pub trait FromRequestParts<S>: Send + Sync {
 We will also want to implement `FromRequest` and `FromRequestParts` for types of our choice. For the demo we'll use JSON and State as State is basically already existent in our framework no matter what, and we've already implemented a JSON response.
 
 ```rust
+
 impl<S, T> FromRequest<S> for Json<T>
 where
     T: for<'a> serde::Deserialize<'a> + Send + Sync,
@@ -726,6 +750,7 @@ where
 Additionally, to remove code bloat we'll impl `FromRequest` for tuples of elements where the last element always implements `FromRequest`, but all other items implement `FromRequestParts`:
 
 ```rust
+
 impl<S, T1> FromRequest<S> for (T1,)
 where
     T1: FromRequest<S>,
@@ -767,6 +792,7 @@ While the `axum` repository does use macros to minimise the amount of toil requi
 As mentioned before when we wrote our original `IntoHandler` block, we implemented it for a function that essentially has no arguments. Here is the impl block for reference so you don't have to go halfway back up the blog post again:
 
 ```rust
+
 impl<F, Fut, I, S> IntoHandler<(), S> for F
 where
     F: Fn() -> Fut + Clone + Send + Sync + 'static,
@@ -786,6 +812,7 @@ where
 Now we'll be implementing it for a function pointer that *does* take arguments. If you're following along, it would be prudent to check that the first type of `IntoHandler` for your implementation uses a comma to turn the type into a tuple - if you use `(T1)` it will assume it's just any old generic and it won't compile.
 
 ```rust
+
 // turn the function into a handler
 impl<F, Fut, I, S, T1> IntoHandler<(T1,), S> for F
 where
@@ -837,6 +864,7 @@ While the generics are are somewhat intimidating, it's also mostly the same as t
 For functions that take two arguments, we need to ensure that the first argument implements `FromRequestParts` rather than `FromRequest` as we need to ensure the request body doesn't actually get consumed before the last argument consumes it. Below is what this would look like:
 
 ```rust
+
 impl<F, Fut, I, S, T1, T2> IntoHandler<(T1, T2), S> for F
 where
     F: Fn(T1, T2) -> Fut + Clone + Send + Sync + 'static,
@@ -897,6 +925,7 @@ Firstly, we'll create our own middleware layer that logs out the path and reques
 A simple `LogLayer` middleware can be created like so that will print the HTTP method and URI, and then call the service:
 
 ```rust
+
 use http::Request;
 use hyper::body::Incoming;
 use tower::Service;
@@ -951,6 +980,7 @@ Admittedly, this is not the most ergonomic way to do it, but it works. You may w
 Next, to add a layering function for our router. Fortunately, this part is quite simple: we simply iterate over every service in our router, and layer it. To be able to do so requires putting a large amount of trait bounds on our `L` generic. However, as they primarily relate to the trait bounds of the `tower` services, you can guess without too much hesitation what exactly the trait bounds will be.
 
 ```rust
+
 impl Router<S> where S: Clone + Send + Sync + 'static {
     // .. other fns
     pub fn layer<L>(mut self, layer: L) -> Self
