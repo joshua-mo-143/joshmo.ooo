@@ -54,7 +54,10 @@ html {
             border-radius: 10px;
             padding: 1rem 2rem;
 
+            overflow-x: scroll;
             code {
+                word-wrap: normal;
+                white-space: pre;
                 padding: 1rem;
 
                 border-radius: 10px;
