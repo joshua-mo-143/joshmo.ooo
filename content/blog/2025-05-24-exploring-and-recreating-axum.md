@@ -8,8 +8,8 @@ tags = ["axum", "tutorial"]
 thumb = "exploring-and-recreating-axum-thumb.png"
 +++
 
-Hi!
-In this article we will try to understand fully how Axum works at the base level, as well as discussing some of the design choices and overall architecture. We will also learn a bit about how it works in practice by writing our own little mini-Axum (the Axum equivalent of Tokio's mini-Redis, if you will).
+## Introduction
+Hi! In this article we will try to understand fully how Axum works at the base level, as well as discussing some of the design choices and overall architecture. We will also learn a bit about how it works in practice by writing our own little mini-Axum (the Axum equivalent of Tokio's mini-Redis, if you will).
 
 Our mini-Axum will, by the end of the article, be able to do the following:
 - Take requests and return handlers based on HTTP request method
