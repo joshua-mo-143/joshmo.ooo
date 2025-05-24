@@ -114,6 +114,7 @@ where
         self.call_with_state(req, ())
     }
 }
+
 ```
 
 Essentially, the method router will chain the routes together and try to find which one matches the request and invoke the relevant service. You can see below that a declarative macro has been set up to do exactly this:
@@ -182,6 +183,7 @@ impl<S, E> MethodRouter<S, E> {
 	    }
 	}
 }
+
 ```
 
 From the above, you can see that essentially it just makes a method router that allows for several methods. On receiving a request, it will then try to go through each HTTP request method and check for a match (and call the function pointer if it does match). See the below for an example of how this looks like on the user end:
@@ -194,6 +196,7 @@ Router::new().route("/",
     // you can see here the handlers are essentially chained here
 	get(hello_world).post(echo_message)
 )
+
 ```
 
 Axum uses [several macros](https://github.com/tokio-rs/axum/blob/dd8d4a47cb674f71d2163518a69568898f5e9077/axum/src/routing/method_routing.rs#L27) to be able to generate all the code for all of the given request methods without taking up what would otherwise be an egregious amount of boilerplate. While this does increase compile time slightly, I would argue that it actually makes sense to use macros here given that a lot of the code is very repetitive and there's no real justification otherwise to *not* use macros (let's face it, would *you* want all of that boilerplate in your library?).
@@ -230,6 +233,7 @@ impl<T, F, R> Handler for Fn(T) -> F where
 	{
 	// .. your methods and whatnot go here
 }
+
 ```
 
 This is of course pseudo-code, but you get the idea. You write a function pointer that takes one or more types that implements `FromRequest` (ie it can be derived from a request), processes it and returns a type that implements `Response`. Nothing too crazy. Of course, this *does* lead to a lot of boilerplate, which has evidently led to the use of another declarative macro, named simply (or perhaps amusingly) `all_the_tuples`:
@@ -238,6 +242,7 @@ This is of course pseudo-code, but you get the idea. You write a function pointe
 
 // https://github.com/tokio-rs/axum/blob/main/axum-core/src/extract/tuple.rs#L74
 all_the_tuples!(impl_from_request);
+
 ```
 
 ## Recreating Axum
@@ -249,6 +254,7 @@ To start, we're going to create our new project:
 
 cargo init mini-axum
 cd mini-axum
+
 ```
 
 Next, we'll add our dependencies. Cue the long list of dependencies!
@@ -258,6 +264,7 @@ Next, we'll add our dependencies. Cue the long list of dependencies!
 cargo add bytes futures http http-body-util hyper hyper-util \
 serde serde-json tokio tower -F hyper/server,hyper-util/full,serde/derive,\
 tokio/net,tower/util
+
 ```
 
 What did we just add?
@@ -301,6 +308,7 @@ impl HyperService<Request<Incoming>> for Router
         })
     }
 }
+
 ```
 
 As you can see, nothing too crazy. We return a box-pinned future (or a `BoxFuture`) that contains a `hyper` response.
@@ -333,6 +341,7 @@ impl Service {
         }
     }
 }
+
 ```
 
 Additionally, the Axum implementation of this actually also implements `IntoFuture`, allowing it to simply be awaited rather than needing to do anything else as this trait allows it to be turned into a future.
@@ -349,6 +358,7 @@ where
         Box::pin(self.run())
     }
 }
+
 ```
 
 Now to actually try out our thing we just made. Create a new `examples` folder in your project root, then create a file called `basic.rs` - and put this code in:
@@ -370,6 +380,7 @@ async fn main() {
 
     svc.await.unwrap();
 }
+
 ```
 
 Now if you run `cargo run --example basic` then visit `localhost:9999` in your browser, you should see `"Hello world!"` as the result. Your browser will additionally expect to be able to fetch a favicon, but that can be safely ignored as backend web servers tend to not need those unless you're serving HTML from your router.
@@ -413,9 +424,10 @@ impl MiniResponse {
             .unwrap()
     }
 }
+
 ```
 
-The rest of the work on this is primarily just writing `IntoMiniResponse` implementations for however many types you want to do it for. Here is one I wrote for returning JSON:
+The rest of the work on this is primarily just writing `IntoMiniResponse` implementations for however many types you want to do it for. Here is one I wrote for returning JSON, as well as plain strings:
 
 ```rust
 
@@ -447,6 +459,35 @@ where
         MiniResponse::new(StatusCode::OK, "application/json", bytes)
     }
 }
+
+
+impl IntoMiniResponse for String {
+    fn into_response(self) -> MiniResponse {
+        let bytes = Bytes::from(&self);
+
+        MiniResponse::new(StatusCode::OK, "text/plain", bytes)
+    }
+}
+
+```
+
+Since we own the `IntoMiniResponse` trait, we can also implement it for `Result<T, E>`:
+
+```rust
+
+impl<T, E> IntoMiniResponse for Result<T, E>
+where
+    T: IntoMiniResponse,
+    E: IntoMiniResponse,
+{
+    fn into_response(self) -> MiniResponse {
+        match self {
+            Ok(res) => res.into_response(),
+            Err(err) => err.into_response(),
+        }
+    }
+}
+
 ```
 
 Technically, we can't actually do anything useful with this yet. However when we get into writing our endpoints, we will need to have this functionality set up already as it'll be part of a required trait bound.
@@ -468,6 +509,7 @@ pub struct IntoHandlerStruct<H, T, S> {
 pub trait IntoHandler<T, S>: Sized {
     fn into_handler(self, state: S) -> IntoHandlerStruct<Self, T, S>;
 }
+
 ```
 
 The next thing to do is to implement our new trait for `F` - that is to say, a function pointer that returns a future wrapping our response type:
@@ -488,6 +530,7 @@ where
         }
     }
 }
+
 ```
 
 There are a couple of things to note here:
@@ -525,6 +568,7 @@ where
         Box::pin(async move { Ok((thing)().await.into_response().hyper_response()) })
     }
 }
+
 ```
 
 Next, we are going to use a struct called `tower::util::BoxCloneSyncService` - essentially, a generic boxed service that also implements Clone and Sync. This allows you to share and send it across threads, which is great for us as we're working in mostly a fully async scenario. Here is the type signature we'll be using:
@@ -558,6 +602,7 @@ impl Router<()> {
         }
 	}
 }
+
 ```
 
 In terms of adding a function to add a route, we need to set a pretty heavy amount of trait bounds. You can see the length of the type signature below is not particularly easy on the eyes:
@@ -590,8 +635,8 @@ where
 
         self
     }
-
 }
+
 ```
 
 The reason *why* we need the trait bounds in the first place is because we need to ensure that `T` is thread-safe (although we use collections of tuples for inputs, a tuple of any amount of elements can be considered 1 type). We also need to ensure that the input type itself also implements `IntoHandler` as we need to convert the function pointers into `IntoHandlerStruct`s.
@@ -635,6 +680,7 @@ where
         }
     }
 }
+
 ```
 
 Finally, let's go back to our `basic.rs` example we wrote earlier, and change it a bit. We will add a handler function that returns a JSON message and add it as a route in our router.
@@ -668,6 +714,7 @@ pub async fn hello_world() -> impl IntoMiniResponse {
 
     (StatusCode::OK, Json(json))
 }
+
 ```
 
 Now this looks a bit more like the `axum` we're all used to!
@@ -684,6 +731,7 @@ use axum::Json;
 async fn echo_message(Json(json): Json<serde_json::Value>) -> Json<serde_json::Value> {
 	Json(json)
 }
+
 ```
 
 Not a particularly complex handler, mind you, but it should work if you were to insert this as a handler into an Axum server.
@@ -706,6 +754,7 @@ pub trait FromRequestParts<S>: Send + Sync {
         state: &S,
     ) -> impl Future<Output = Self> + Send;
 }
+
 ```
 
 We will also want to implement `FromRequest` and `FromRequestParts` for types of our choice. For the demo we'll use JSON and State as State is basically already existent in our framework no matter what, and we've already implemented a JSON response.
@@ -745,6 +794,7 @@ where
         State(state.to_owned())
     }
 }
+
 ```
 
 Additionally, to remove code bloat we'll impl `FromRequest` for tuples of elements where the last element always implements `FromRequest`, but all other items implement `FromRequestParts`:
@@ -779,6 +829,7 @@ where
         (t1, t2)
     }
 }
+
 ```
 
 Notes:
@@ -807,6 +858,7 @@ where
         }
     }
 }
+
 ```
 
 Now we'll be implementing it for a function pointer that *does* take arguments. If you're following along, it would be prudent to check that the first type of `IntoHandler` for your implementation uses a comma to turn the type into a tuple - if you use `(T1)` it will assume it's just any old generic and it won't compile.
@@ -857,6 +909,7 @@ where
         })
     }
 }
+
 ```
 
 While the generics are are somewhat intimidating, it's also mostly the same as the last time we impl'd `Endpoint<S>` and `IntoHandler<T, S>` except we are now adding trait generics that represent arguments to be taken by the function handler.
@@ -1015,6 +1068,7 @@ impl Router<S> where S: Clone + Send + Sync + 'static {
         self
     }
 }
+
 ```
 ### State in Axum
 [State in Axum](https://docs.rs/axum/latest/axum/index.html#sharing-state-with-handlers) can be defined broadly as "some variables that are shared between handlers". In that sense, there are a total of 4 different ways that you can actually apply state to handlers:
@@ -1025,11 +1079,100 @@ impl Router<S> where S: Clone + Send + Sync + 'static {
 
 Most people will likely opt for the first two options as a lot of the time using closure captures may not be ideal, and task-local variables rely on the task executor actually being able to use task-local variables and is more primarily for things like sharing state with things like `IntoResponse` implementations.
 
+For reference, here is what an example of using State from an extractor looks like:
+
+```rust
+
+use axum::extract::State;
+use axum::http::StatusCode;
+
+#[derive(Clone)]
+struct MyType;
+
+// code in a function
+let router = Router::new()
+    .route("/", get(do_something))
+    .with_state(MyType);
+
+// our handler
+async fn do_something(State(state): State<MyType>) -> StatusCode {
+    // .. do something here
+
+    StatusCode::OK
+}
+
+```
+
+Pretty easy, all things considered. You can't change the state type (unless you use `FromRef`), but it's very ergonomic and mostly self-explanatory.
+
 Of course, as you've probably noticed we have already implemented the first type of state which is built into the router endpoints. However, you can also implement `Extension<T>` as a layer by doing the following:
 - Create an extension layer of type `T: Clone`. Implement `FromRequest<S>` and `FromRequestParts<S>` for it.
 - Call `request.extensions_mut()` and insert the type in, then call the service as usual with the request that has had the extension data added.
 
-	This will allow you to add extensions into your route handlers. Not entirely typesafe mind you as there may be issues with adding the extension data that can cause unwanted behaviour if you use the wrong type, but it's there.
+```rust
+
+struct Extension<T>(pub T);
+struct ExtensionService<T, S> { ext: T, inner: S };
+
+impl<S, T> Layer<S> for Extension<T> where T: Clone {
+    type Service = ExtensionService<T>;
+
+    fn layer(&self, inner: S) -> Self::Service {
+        ExtensionService { ext: self.0.clone(), inner }
+    }
+}
+
+impl<T, S> tower::Service<Request<Incoming>> for ExtensionService<T, S> where T: Clone, S: Service<Request<Incoming>> {
+    type Error = S::Error;
+    type Response = S::Response;
+    type Future = S::Future;
+
+    fn call(&mut self, mut req: Request<Incoming>) -> Self::Future {
+        req.extensions_mut().insert(self.ext);
+
+        let mut service = self.inner.clone();
+
+        service.call(req)
+    }
+
+    fn poll_ready(
+        &mut self,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Result<(), Self::Error>> {
+        std::task::Poll::Ready(Ok(()))
+    }
+}
+```
+
+```rust
+
+impl<T, S> FromRequest<S> for Extension<T> {
+    async fn from_request(req: Request<Incoming>, state: &S) -> Self {
+        let Some(val) = request.extensions.get::<T>() else {
+            panic!("Welp, there's nothing here.");
+        }
+
+        Self(val)
+    }
+}
+```
+
+This will allow you to add extensions into your route handlers like so:
+
+```rust
+
+use mini_axum::{Extension};
+
+// router code in a function
+let rtr = Router::new().layer(Extension("Hello world!".to_string()));
+
+async fn do_something(Extension(ext): Extension<String>) -> String {
+    ext
+}
+
+```
+
+Not entirely typesafe mind you as there may be issues with adding the extension data that can cause unwanted behaviour if you use the wrong type, but it's there.
 
 ## Finishing up
 Thanks for reading! I hope this has been somewhat enlightening. This has been an extremely long post and I've spent many hours toiling and trying to understand the magic that makes Axum the framework that it is today, but we have done it. Hopefully, we have become better engineers for doing it. Below are additionally a list of current demo limitations and pitfalls to avoid while recreating the MVP should you decide to do so.
