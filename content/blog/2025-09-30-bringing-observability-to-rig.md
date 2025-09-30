@@ -29,7 +29,7 @@ Because AI (agent) frameworks typically have many layers of abstraction, this co
 
 Of course, we have also received GitHub issues about this exact issue. Without time to investigate time allocation for it though, we'd left it on the shelf for a while as the ticket was basically just "improve observability" without any real leads. After Swiftide implemented their Langfuse integration however, I was pretty motivated to get our observability integration going.
 
-[1] Okay, I mean there's the [guerilla](https://github.com/mehcode/guerrilla) crate. Doesn't mean you should do it, though.
+[^1] Okay, I mean there's the [guerilla](https://github.com/mehcode/guerrilla) crate. Doesn't mean you should do it, though.
 
 ### What our options were
 So, our options were primarily as follows:
