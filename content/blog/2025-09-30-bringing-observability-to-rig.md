@@ -3,6 +3,9 @@ title = "Bringing Observability to Rig"
 description = "Observability is necessary in production. Let's talk about how Rig implements it."
 template = "blog-page.html"
 tags = ["observability", "rig"]
+
+[extra]
+thumb = "bringing-observability-to-rig-thumb.png"
 +++
 With the new Rig 0.21.0 release comes significantly upgraded providers in terms of observability. We have added compatibility for OpenTelemetry GenAI Semantic Conventions, as well as instrumenting the system such that you can either essentially use Rig's inbuilt spans for whatever you want, or alternatively making your own spans and instrumenting those on top of our pre-defined functions.
 
