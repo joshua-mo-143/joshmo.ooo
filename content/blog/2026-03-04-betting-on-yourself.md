@@ -7,6 +7,7 @@ tags = ["miscellaneous"]
 [extra]
 thumb = "on-betting-on-yourself-thumb.png"
 +++
+## The initial bet
 Making the initial bet doesn't start with a grand gesture, or moment. It starts when you believe in something so strongly that you will chase it with everything you have.
 
 For me, that started as a teenager. I loved music and wanted to get into songwriting and all that kind of stuff. I even eschewed going to university so I could get a music diploma... although at the time when talking to my parents, I don't think they thought it was a good idea. And even though it was pretty obvious I was not getting much success with it, it was something that I felt very strongly about. 
