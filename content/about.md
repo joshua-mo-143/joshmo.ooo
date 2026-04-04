@@ -3,17 +3,15 @@ title = "About"
 +++
 
 ## About Me
-Professionally, I'm a DevRel Engineer at [Playgrounds Analytics](https://playgrounds.network), a company that aims to empower AI developers through free open source tooling.
+I'm Joshua Mo, a software engineer who specialises in Rust. Professionally, I make things and write blog posts for people who are interested in Rust. I'm also interested in AI/ML and WASM.
 
-My main programming language of choice is Rust.
+Professionally, I am the Lead DevRel Engineer at [Venice.ai](https://venice.ai), a private AI model platform.
 
-As a software developer with expertise in primarily web development, I also have extensive experience using JavaScript, TypeScript and rudimentary experience with most dynamic languages.
+Outside of my day-to-day work, I also:
+- coach workshops for [Codebar](https://codebar.io/), a charity dedicated to helping underrepresented groups in tech get jobs
+- oversee some of the software work at [AI Engine](https://aiengine.build/), a community event for AI builders
 
-Some other languages I like using:
-- Clojure
-- OCaml
-
-Some random facts about my setup:
-- Editor: Zed
-- Terminal: Alacritty
-- OS: Ubuntu
+## A Short History
+- Feb 2023 - Feb 2025: DevRel Engineer at [shuttle.dev](https://shuttle.dev)
+- Jan 2025 - Apr 2026: [Rig](https://github.com/0xplaygrounds/rig) project lead at [Playgrounds Analytics](https://github.com/0xPlaygrounds)
+- Current: Lead DevRel Engineer at [Venice.ai](https://venice.ai)
